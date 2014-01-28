@@ -1,0 +1,505 @@
+<!-- add color to relect the quantity -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Efficiency</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+<script type="text/javascript" src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+<script src="http://code.jquery.com/jquery.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="https://togetherjs.com/togetherjs-min.js"></script>
+
+</head>
+<body>
+	<img src="http://muyueh.com/seeall/image/efficiency.jpeg" style="display:none;">
+<script type="text/javascript">
+
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-36523378-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+var margin = {top:10, left: 80, right: 100, bottom: 30};
+var w = 960 - margin.left - margin.right; 
+// var h = 500 - margin.top - margin.bottom;
+var h = 300 - margin.top - margin.bottom;
+// var h = 1500 - margin.top - margin.bottom;
+
+var svg = d3.select("body")
+	.append("svg")
+	.attr("width", w + margin.left + margin.right)
+	.attr("height", h + margin.top + margin.bottom)
+	.attr("class", "topSVG")
+	.append("g")	
+	.attr("transform", "translate(" + margin.left + ", " + margin.top + ")");// will only need to use width and height directily, since it has been transformed
+
+var x = d3.scale.linear()
+	.range([0, w]);
+
+var y = d3.scale.linear()
+	.range([h, 0]); //since the height 0 is top    
+
+var color  = d3.scale.category20();
+
+var startColor = "red", endColor = "blue";
+
+var formatxAxis = d3.format('.0f');
+var xAxis = d3.svg.axis()
+	.scale(x)
+	.orient("bottom")
+	.ticks(20)
+	.tickFormat(formatxAxis);
+
+var yAxis = d3.svg.axis()
+	.scale(y)
+	.orient("left");
+
+var line = d3.svg.line()
+	// .interpolate("line")
+	.interpolate("basis")
+	.x(function(d) {return x(d.year); })
+	.y(function(d) {return y(d.ratio); });
+
+var littleHack = {
+	"最終消費": 242243.613,
+	"能源部門自用": 19241.654,
+	"整體效率": 223001.959,
+	"工業部門": 127775.758,
+	"礦業": 419.484,
+	"食品製造業": 3650.807,
+	"紡織業": 5873.745,
+	"皮革業": 242.049,
+	"木竹業": 414.947,
+	"紙業": 3424.466,
+	"印刷業": 545.658,
+	"化學材料製造業": 26858.303,
+	"基本化學材料業": 18710.643,
+	"基本化工業": 234.138,
+	"石化原料業": 16812.191,
+	"肥料製造業": 0,
+	"人纖製造業": 5854.856,
+	"樹脂塑膠橡膠業": 1501.854,
+	"其他化材製造業": 790.95,
+	"化學製品業": 3371.092,
+	"橡膠製品業": 1184.936,
+	"塑膠製品業": 5774.262,
+	"非金屬礦製品製造業": 5696.263,
+	"水泥業": 2042.57,
+	"其他": 3653.693,
+	"金屬基本工業": 16723.786,
+	"鋼鐵基本工業": 15640.372,
+	"非鐵金屬基本工業": 1083.414,
+	"(鋁業)": 587.286,
+	"金屬製品製造業": 6565.526,
+	"機械業": 2074.013,
+	"電機業": 38619.24,
+	"運輸工具修配業": 2325.852,
+	"其他": 4011.329,
+	"運輸部門": 1203.064,
+	"農業部門": 2726.061,
+	"服務業部門": 46878.624,
+	"住宅部門": 44418.452
+};
+
+var audioName = {
+	"整體效率": new Audio("./sound/electricity.wav"),
+	"工業部門": new Audio("./sound/industrial.wav"),
+	"礦業": new Audio("./sound/mining.wav"),
+	"食品製造業": new Audio("./sound/apple.wav"),
+	"紡織業": new Audio("./sound/sewing.wav"),
+	"皮革業": new Audio("./sound/leather.wav"),
+	"木竹業": new Audio("./sound/wood.wav"),
+	"紙業": new Audio("./sound/printing.wav"),
+	"印刷業": new Audio("./sound/copymachine.wav"),
+	"化學材料製造業": new Audio("./sound/laboratory.wav"),
+	"化學製品業": new Audio("./sound/bottle.wav"),
+	"橡膠製品業": new Audio("./sound/rubber.wav"),
+	"塑膠製品業": new Audio("./sound/wind.wav"),
+	"非金屬礦製品製造業": new Audio("./sound/cement.wav"),
+	"金屬基本工業": new Audio("./sound/metal.wav"),
+	"金屬製品製造業": new Audio("./sound/sizzle.wav"),
+	"機械業": new Audio("./sound/washmachine.wav"),
+	"電機業": new Audio("./sound/robot.wav"),
+	"運輸部門": new Audio("./sound/HST.wav"),
+	"農業部門": new Audio("./sound/tractor.wav"),
+	"服務業部門": new Audio("./sound/taping.wav"),
+	"住宅部門": new Audio("./sound/audience.wav")
+};
+
+var Info = {
+	"最終消費": 			{highlight: false, display: true},
+	"能源部門自用": 		{highlight: false, display: true},
+	"整體效率": 			{highlight: false, display: true},
+	"工業部門": 			{highlight: true, display: true},
+	"礦業": 				{highlight: false, display: true},
+	"食品製造業": 		{highlight: false, display: true},
+	"紡織業": 			{highlight: false, display: true},
+	"皮革業": 			{highlight: false, display: true},
+	"木竹業": 			{highlight: false, display: true},
+	"紙業": 				{highlight: false, display: true},
+	"印刷業": 			{highlight: false, display: true},
+	"化學材料製造業": 		{highlight: false, display: true},
+	"基本化學材料業": 		{highlight: false, display: true},
+	"基本化工業": 		{highlight: false, display: true},
+	"石化原料業": 		{highlight: false, display: true},
+	"肥料製造業": 		{highlight: false, display: true},
+	"人纖製造業": 		{highlight: false, display: true},
+	"樹脂塑膠橡膠業": 		{highlight: false, display: true},
+	"其他化材製造業": 		{highlight: false, display: true},
+	"化學製品業": 		{highlight: false, display: true},
+	"橡膠製品業": 		{highlight: false, display: true},
+	"塑膠製品業": 		{highlight: false, display: true},
+	"非金屬礦製品製造業": 	{highlight: false, display: true},
+	"水泥業": 			{highlight: false, display: true},
+	"其他": 				{highlight: false, display: true},
+	"金屬基本工業": 		{highlight: false, display: true},
+	"鋼鐵基本工業": 		{highlight: false, display: true},
+	"非鐵金屬基本工業": 	{highlight: false, display: true},
+	"(鋁業)": 			{highlight: false, display: true},
+	"金屬製品製造業": 		{highlight: false, display: true},
+	"機械業": 			{highlight: false, display: true},
+	"電機業": 			{highlight: false, display: true},
+	"運輸工具修配業": 		{highlight: false, display: true},
+	"其他": 				{highlight: false, display: true},
+	"運輸部門": 			{highlight: false, display: true},
+	"農業部門": 			{highlight: false, display: true},
+	"服務業部門": 		{highlight: true, display: true},
+	"住宅部門": 			{highlight: true, display: true}
+};
+
+d3.tsv("efficiency.tsv", function(error, dataSet){	
+	color.domain(d3.keys(dataSet[0]).filter(function(key){ return key !== "year"; }));
+
+	dataSet.forEach(function(d){
+		d.year = parseInt(d.year);
+	})
+	var industries  = color.domain().map(function(name){
+		return {
+			name: name, 
+			values: dataSet.map(function(d){
+				return {year: d.year, ratio: +d[name] };
+			})
+		};
+	})
+
+	x.domain(d3.extent(dataSet, function(d){  return d.year; }));
+	y.domain([
+		0,
+		d3.max(industries, function(c){ return d3.max(c.values, function(v){ return v.ratio; }); }),
+	]);
+
+	//for color
+	// var 
+	// Attention!! 
+	// Global 
+	var signal = d3.scale.linear().domain([
+			d3.min(industries, function(c){ return (c.values[c.values.length - 1].ratio - c.values[0].ratio) / c.values[0].ratio ; }),
+			d3.max(industries, function(c){ return (c.values[c.values.length - 1].ratio - c.values[0].ratio) / c.values[0].ratio ; })
+		]).range([startColor, endColor]);
+
+	svg.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0," + h + ")")
+		.call(xAxis);
+
+	svg.append("g")
+		.attr("class", "y axis")
+		.call(yAxis)
+		.append("text")
+		.attr("transform", "rotate(-90)")
+		.attr("y", 6)
+		.attr("dy", ".71em")
+		.style("text-anchor", "end")
+		.text("GDP貢獻 百萬元 / 百萬度電");
+
+
+	var industry = svg.selectAll(".industry")
+		.data(industries)
+		.enter()
+		.append("g")
+		.attr("class", "industry");
+
+	industry.append("text")
+		.datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+		.attr("transform", function(d) { return "translate(" + x(d.value.year) + "," + y(d.value.ratio) + ")"; })
+		.attr("x", 3)
+		.attr("dy", ".35em")
+		.text(function(d) { return d.name; })
+		.attr("class", function(d){ return "t_ t_" + d.name ;})
+		.style("opacity", 0);
+
+	var inEffect = function(d, that){
+		d3.select(that)
+			.style("stroke-opacity", 0.8);
+
+		d3.select(".t_" + d.name )
+			.transition(10000)
+			.style("opacity", 1);
+
+		if(audioName[d.name] !== undefined){
+			audioName[d.name].play();
+		}
+	}
+	var outEffect = function(d, that){
+		d3.select(".t_" + d.name )
+			.transition(1000)
+			.style("opacity", 0);
+
+		d3.select(that)
+			.transition(5000)
+			.style("stroke-opacity", 0.1);
+	}
+
+	industry.append("path")
+		.attr("class", "effipath")
+		.attr("d", function(d){ return line(d.values); })
+		.style("stroke-width", function(d){
+			return 1 + Math.log(littleHack[d.name]);
+		})
+		.style("stroke", function(d){ 
+			if(Info[d.name].highlight){
+				d3.select(".t_" + d.name )
+					.style("opacity", 1);
+			}
+			return signal((d.values[d.values.length - 1].ratio - d.values[0].ratio) / d.values[0].ratio );
+		})
+		.style("stroke-opacity", 0.1)
+		.on("mouseover", function(d){ 
+			inEffect(d, this);
+		})
+		.on("mouseout", function(d){ 
+			if(Info[d.name].highlight){
+			}
+			else{
+				outEffect(d, this);
+			}
+		})
+		.on("mousedown", function(d){ 
+			if(Info[d.name].highlight){
+				Info[d.name].highlight = false;
+				outEffect(d, this);				
+			}
+			else{
+				Info[d.name].highlight = true;
+				inEffect(d, this);
+			}
+		});
+		
+
+	var redraw = function(){
+		signal = d3.scale.linear().domain([
+			d3.min(industries, function(c){ return (c.values[c.values.length - 1].ratio - c.values[0].ratio) / c.values[0].ratio ; }),
+			d3.max(industries, function(c){ return (c.values[c.values.length - 1].ratio - c.values[0].ratio) / c.values[0].ratio ; })
+		]).range([startColor, endColor]);
+
+		industries  = color.domain().map(function(name){
+			if(Info[name].display){
+				return {
+					name: name, 
+					values: dataSet.map(function(d){ return {year: d.year, ratio: +d[name] }; })
+				};	
+			}
+			else{
+				return null;
+			}
+			
+		})
+		
+		industries = industries.filter(function(d){ return d != null;});
+		// console.log(industries);
+
+		y.domain([
+			0,
+			d3.max(industries, function(c){ return d3.max(c.values, function(v){ return v.ratio; }); }),
+		]);
+
+		industry = svg.selectAll(".industry");
+
+		industry.selectAll(".effipath")
+			.transition()
+			.attr("d", function(d){ return line(d.values); })
+			.style("stroke", function(d){ 
+				if(Info[d.name].highlight){
+					d3.select(".t_" + d.name )
+						.style("opacity", 1);
+				}
+				return signal((d.values[d.values.length - 1].ratio - d.values[0].ratio) / d.values[0].ratio );
+			});
+
+		industry.selectAll(".t_")
+			.transition()
+			.attr("transform", function(d) { return "translate(" + x(d.value.year) + "," + y(d.value.ratio) + ")"; });
+		svg.selectAll(".y.axis")
+			.transition()
+			.call(yAxis);
+	};
+
+	redraw();
+
+	var dislayInd  = [ "整體效率", "工業部門", "食品製造業", "紡織業", "皮革業", "木竹業", "紙業", "印刷業", "化學材料製造業", "基本化學材料業", "基本化工業", "石化原料業", "肥料製造業", "人纖製造業", "樹脂塑膠橡膠業", "其他化材製造業", "化學製品業", "橡膠製品業", "塑膠製品業", "非金屬礦製品製造業", "水泥業", "其他", "金屬基本工業", "鋼鐵基本工業", "非鐵金屬基本工業", "(鋁業)", "金屬製品製造業", "機械業", "電機業", "運輸工具修配業", "其他"];
+
+	var dislayWor  = [ "工業部門", "紡織業", "木竹業", "紙業", "化學材料製造業", "基本化學材料業", "人纖製造業", "樹脂塑膠橡膠業", "其他化材製造業", "化學製品業", "橡膠製品業", "塑膠製品業", "非金屬礦製品製造業", "其他", "金屬基本工業", "金屬製品製造業", , "其他"];
+
+	$(".btn").click(function(){
+		
+		if(this.id === "alldepartment"){
+			// console.log("dept case");
+			for(var element in Info){
+				Info[element].display = true;
+			}
+		}
+		else if(this.id === "inddepartment"){
+			// console.log("indu case");
+			for(var element in Info){
+				Info[element].display = false;
+			}
+
+			for(var item in dislayInd){
+				Info[dislayInd[item]].display = true;
+			}
+		}
+		else if(this.id === "wordepartment"){
+			for(var element in Info){
+				Info[element].display = false;
+			}
+
+			for(var item in dislayWor){
+				Info[dislayWor[item]].display = true;
+			}
+		}
+		if(this.id === "color1"){
+			startColor = "red";
+			endColor = "blue";
+		}
+		else if(this.id === "color2"){
+			startColor = "#C0F400";
+			endColor = "#B40097";
+		}
+		else if(this.id === "color4"){
+
+			var num = Math.floor((Math.random()* 20));
+			console.log(num + " " + (num + 1) % 20);
+
+			var Rcolor = d3.scale.category20();
+			// Rcolor.domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]);
+
+			var i;
+			for(i = 0; i < num; i++){
+				Rcolor(i);	
+			}
+			startColor = Rcolor((i + 1) % 20);
+
+			num = Math.floor((Math.random()* 20));
+			for(i = 0; i < num; i++){
+				Rcolor(i);	
+			}
+			endColor = Rcolor((i + 1) % 20);
+		}
+		// console.log(Info);
+		redraw();
+	})
+
+})
+
+
+</script>
+
+<style type="text/css">
+
+body {
+	font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
+}
+
+.x.axis path {
+	display: none;
+}
+
+.effipath {
+	fill: none;
+	stroke: steelblue;
+	stroke-width: 1.5px;
+}
+
+</style>
+
+
+
+<div class="container">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="btn-group btn-group-xs" data-toggle="buttons">
+				<label class="btn btn-primary active" id ="alldepartment">
+					<input type="radio" name="options" id="option1"> 所有部門
+				</label>
+				<label class="btn btn-primary" id ="inddepartment">
+					<input type="radio" name="options" id="option2"> 工業部門
+				</label>
+				<label class="btn btn-primary" id ="wordepartment">
+					<input type="radio" name="options" id="option2"> 工業後半
+				</label>
+			</div>
+
+			<div class="btn-group btn-group-xs" data-toggle="buttons">
+				<label class="btn btn-warning active" id ="color1">
+					<input type="radio" name="options" id="color1"> 標準色
+				</label>
+				<label class="btn btn-warning" id ="color2">
+					<input type="radio" name="options" id="color2"> 浮世繪
+				</label>
+				<!-- <label class="btn btn-warning" id ="color3">
+					<input type="radio" name="options" id="color3"> 向日葵
+				</label> -->
+				<label class="btn btn-warning" id ="color4">
+					<input type="radio" name="options" id="color4"> 黑白配
+				</label>
+			</div>
+		</div>
+		<div class="col-lg-6">
+			</br></br></br>
+			
+			<h4>我國各業用電效率之增減 （致意 李國鼎先生）</h4>
+			<h5>
+				</br>
+				<p>（打開音響，可聽到各業的環境音）</p>
+				<p>可以看到絕大部份的產業其實是「紫色」（用電效率趨於穩定），少數的幾個紅色比方皮革業用電便效率退部，跟藍色機械、電機用電效率進步。給服務業每度電可產生 150 元的產出，工業大概都只有五分之一。</p>
+				<p>用電效率最差的產業分別由「塑膠」、「金屬基本」、「木竹」以及「其他工業」所贏得，最好則是由「機械」、「印刷」及「電機」</p>
+				<p>「住宅用電」用的單位跟別人不一樣，他這邊的數值是「人頭」：過去每百萬度電可以滿足 800 人，如今只能滿足 500 多人，我們每一個人用的電越來越兇。</p>
+				<p>還有一個隱含的洞見，是在製表之後才發現的：許多產業在 2009年前後的用電效率都下降了，猜測主要是因為經濟不景氣，當機器沒有全力運轉的時候，效率是比較差的。</p>
+
+				</br>
+				<p>使用「紅、藍」做為主要配色，是從實用主義出發；畢竟這是經濟圖表，挑了兩個最「清楚」的顏色。另有發展出其他的配色，供純粹的線條視覺欣賞。</p>
+
+				<button id="togetherJS" class="btn btn-danger btn-xs" onclick="TogetherJS(this); return false;">
+					私人討論串
+				</button> 
+				<button class="btn btn-danger btn-xs" onclick="location.href='http://muyueh.com/see/nuk/efficiency.html#&togetherjs=zknpSAnjHJ'">
+					<span class="glyphicon glyphicon-user "></span>公開討論串
+				</button> 
+				<p><a href="http://db.tt/gUHse2NI">資料分析、素材來源</a></p>
+
+			</h5>
+		</div>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+
+</script>
+
+
+</body>
+</html>
