@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Supply Bar</title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css">
+	<script src="http://code.jquery.com/jquery.js"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+	<script type="text/javascript" src="./Tangle-0.1.0/Tangle.js"></script>
+
+  <link rel="stylesheet" href="./Tangle-0.1.0/TangleKit/TangleKit.css" type="text/css">
+  <script type="text/javascript" src="./Tangle-0.1.0/TangleKit/mootools.js"></script>
+  <script type="text/javascript" src="./Tangle-0.1.0/TangleKit/sprintf.js"></script>
+  <script type="text/javascript" src="./Tangle-0.1.0/TangleKit/BVTouchable.js"></script>
+  <script type="text/javascript" src="./Tangle-0.1.0/TangleKit/TangleKit.js"></script>
+
+</head>
+<body>
+<script type="text/javascript">
+
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-36523378-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+
+
+// var scenario = [
+// 	{name: "BaseCase", LNG: 104.907, Coal: 55.043, Oil: 4.088, Nuclear: 15.284, Hydro: 7.598, Solar: 0.071, Bio: 0.471, Wind: 1.236, Waste: 3.004},
+// 	{name: "NukeCase", LNG: 104.907, Coal: 55.043, Oil: 4.088, Nuclear: 176.001, Hydro: 7.598, Solar: 0.071, Bio: 0.471, Wind: 1.236, Waste: 3.004},
+// 	{name: "HeatCase", LNG: 233.510, Coal: 55.043, Oil: 4.088, Nuclear: 15.284, Hydro: 7.598, Solar: 0.071, Bio: 0.471, Wind: 1.236, Waste: 3.004},
+// 	{name: "TaiPCase", LNG: 120.340, Coal: 75.619, Oil: 4.088, Nuclear: 31.356, Hydro: 7.598, Solar: 0.071, Bio: 0.471, Wind: 2.419, Waste: 3.004},
+// 	{name: "WindCase", LNG: 104.907, Coal: 55.043, Oil: 4.088, Nuclear: 15.284, Hydro: 7.598, Solar: 0.071, Bio: 0.471, Wind: 1.236, Waste: 3.004},
+// 	{name: "SolarCase", LNG: 104.907, Coal: 55.043, Oil: 4.088, Nuclear: 15.284, Hydro: 7.598, Solar: 158.669, Bio: 0.471, Wind: 1.236, Waste: 3.004}
+// ];
+
+
+var l_scenario = [
+	{	name: "BaseCase", 
+		initialize: function(){
+			this.c_LNG = 		104.907; 
+			this.c_Coal= 		55.043;	 
+			this.c_Oil= 		4.088;
+			this.c_Nuclear= 	15.284; 
+			this.c_Hydro= 		7.598;
+			this.c_Solar=	 	0.071; 
+			this.c_Bio= 		0.471; 
+			this.c_Wind= 		1.236; 
+			this.c_Waste= 		3.004;
+		},
+		update: function(){
+
+		}
+	},
+	{	name: "NukeCase", 
+		initialize: function(){
+			this.c_LNG = 		104.907; 
+			this.c_Coal= 		55.043;	 
+			this.c_Oil= 		4.088;
+			this.c_Nuclear= 	176.001; 
+			this.c_Hydro= 		7.598;
+			this.c_Solar=	 	0.071; 
+			this.c_Bio= 		0.471; 
+			this.c_Wind= 		1.236; 
+			this.c_Waste= 		3.004;
+		},
+		update: function(){
+
+		}
+	},
+	{	name: "HeatCase", 
+		initialize: function(){
+			this.c_LNG = 		259.230; 
+			this.c_Coal= 		55.043;	 
+			this.c_Oil= 		4.088;
+			this.c_Nuclear= 	15.284; 
+			this.c_Hydro= 		7.598;
+			this.c_Solar=	 	0.071; 
+			this.c_Bio= 		0.471; 
+			this.c_Wind= 		1.236; 
+			this.c_Waste= 		3.004;
+		},
+		update: function(){
+
+		}
+	},
+	{	name: "TaiPCase", 
+		initialize: function(){
+			this.c_LNG = 		120.340; 
+			this.c_Coal= 		75.619;	 
+			this.c_Oil= 		4.088;
+			this.c_Nuclear= 	31.356; 
+			this.c_Hydro= 		7.598;
+			this.c_Solar=	 	0.071; 
+			this.c_Bio= 		0.471; 
+			this.c_Wind= 		2.419; 
+			this.c_Waste= 		3.004;
+		},
+		update: function(){
+			
+		}
+	},
+	{	name: "WindCase", 
+		initialize: function(){
+			this.c_LNG = 		104.907; 
+			this.c_Coal= 		55.043;	 
+			this.c_Oil= 		4.088;
+			this.c_Nuclear= 	15.284; 
+			this.c_Hydro= 		7.598;
+			this.c_Solar=	 	0.071; 
+			this.c_Bio= 		0.471; 
+			this.c_Wind= 		157.344; 
+			this.c_Waste= 		3.004;
+		},
+		update: function(){
+			
+		}
+	},
+	{	name: "SolarCase", 
+		initialize: function(){
+			this.c_LNG = 		104.907; 
+			this.c_Coal= 		55.043;	 
+			this.c_Oil= 		4.088;
+			this.c_Nuclear= 	15.284; 
+			this.c_Hydro= 		7.598;
+			this.c_Solar=	 	158.669; 
+			this.c_Bio= 		0.471; 
+			this.c_Wind= 		1.236; 
+			this.c_Waste= 		3.004;
+		},
+		update: function(){
+			
+		}
+	}
+]
+
+var l_Base = [
+	{name:"c_LNG" , value: 		104.907},
+	{name:"c_Coal", value: 		55.043},
+	{name:"c_Oil", value: 		4.088},
+	{name:"c_Nuclear", value: 	15.284},
+	{name:"c_Hydro", value: 		7.598},
+	{name:"c_Solar", value:	 	0.071},
+	{name:"c_Bio", value: 		0.471},
+	{name:"c_Wind", value: 		1.236},
+	{name:"c_Waste", value: 		3.004} 
+	// {name:"c_LNG" , value: 		104},
+	// {name:"c_Coal", value: 		55},
+	// {name:"c_Oil", value: 		4},
+	// {name:"c_Nuclear", value: 	15},
+	// {name:"c_Hydro", value: 		7},
+	// {name:"c_Solar", value:	 	0.071},
+	// {name:"c_Bio", value: 		0.471},
+	// {name:"c_Wind", value: 		1},
+	// {name:"c_Waste", value: 		3}
+]
+
+var l_cost = [
+	// NTD/MWh
+	{name:"c_LNG", value: 		3.2},
+	{name:"c_Coal", value: 		1.68},
+	{name:"c_Oil", value: 		5.79},
+	{name:"c_Nuclear", value: 	0.72},
+	{name:"c_Hydro", value: 	1.34},
+	{name:"c_Solar", value: 	8.18},
+	{name:"c_Bio", value: 		3},
+	{name:"c_Wind", value: 		5.28},
+	{name:"c_Waste", value: 	3}
+];
+var l_CO2 = [//tons/TWh
+	{name:"c_LNG",  	value: 202000},
+	{name:"c_Coal",  	value: 344000},
+	{name:"c_Oil",  	value: 278000},
+	{name:"c_Nuclear", value: 0},
+	{name:"c_Hydro",  	value: 0},
+	{name:"c_Solar",  	value: 0},
+	{name:"c_Bio",  	value: 37000},
+	{name:"c_Wind",  	value: 0 }, //offshore wind power
+	{name:"c_Waste",  	value: 330000}
+];
+
+var l_PP = [ //engine-> TWh
+	{name:"c_LNG",  	value: 	2.572},
+	{name:"c_Coal",  	value: 	2.572},
+	{name:"c_Oil",  	value: 	2.572},
+	{name:"c_Nuclear", value: 	8.035},
+	{name:"c_Hydro",  	value: 	0.016}, // small
+	{name:"c_Solar",  	value: 	1.762}, //Da-An District
+	{name:"c_Bio",  	value: 	0.021}, //small
+	{name:"c_Wind",  	value: 	0.011 }, //offshore wind power x 1
+	{name:"c_Waste",  	value: 	0.048}
+];
+
+
+
+var getAValue = function(name, array){
+	for(var i = 0; i < array.length; i++){
+		// console.log("checking " + array[i].name);
+		if(array[i].name === name){
+			return array[i].value;
+		}
+	}
+}
+var getChineseName = function(name){
+	if(name === "c_LNG"){
+		return "LNG";
+	}
+	else if(name === "c_Coal"){
+		return "Coal";
+	}
+	else if(name === "c_Oil"){
+		return " Oil";
+	}
+	else if(name === "c_Nuclear"){
+		return " Nuclear";
+	}
+	else if(name === "c_Hydro"){
+		return " Hydro";
+	}
+	else if(name === "c_Solar"){
+		return " Solar (11 km2) ";
+	}
+	else if(name === "c_Bio"){
+		return " Biomass";
+	}
+	else if(name === "c_Wind"){
+		return " Off-Shore Wind";
+	}
+	else if(name === "c_Waste"){
+		return " Waste";
+	}
+}
+
+var tangle;
+var switchTangle = function(Name){
+	for(var i = 0; i < l_scenario.length; i++){
+		// console.log(scenario[i]);
+		if(l_scenario[i].name === Name){
+			tangle.setModel(l_scenario[i]);
+			break;
+		}
+	}
+	
+}
+
+var sumUp = function(A, B){
+	var sum = 0;
+	for(var i = 0; i < A.length; i++){
+		for(var j = 0; j < B.length; j++){
+			if(A[i].name === B[j].name ){
+				sum += A[i].value * B[i].value;
+			}
+		}		
+	}
+	return sum;
+}
+
+var i_Supply = [
+	{name: "c_LNG", value: 0},
+	{name: "c_Coal", value: 0},
+	{name: "c_Oil" , value: 0},
+	{name: "c_Nuclear", value: 0},
+	{name: "c_Hydro", value: 0},
+	{name: "c_Solar", value: 0},
+	{name: "c_Bio" , value: 0},
+	{name: "c_Wind", value: 0},
+	{name: "c_Waste", value: 0}
+]; // need to initialize to something, so that the graph can performed
+
+var totalEnergy;
+var setUpTangle = function(){
+	// initialization of l_scenario
+	for(var i = 0; i < l_scenario.length; i++){
+		l_scenario[i].update = function(){
+			this.r_Heat = this.c_LNG + this.c_Coal + this.c_Oil;
+			this.r_Renew = this.c_Hydro + this.c_Solar + this.c_Bio + this.c_Wind + this.c_Waste;
+			this.r_Total = this.c_LNG + this.c_Coal + this.c_Oil + this.c_Nuclear + this.c_Hydro + this.c_Solar + this.c_Bio + this.c_Wind + this.c_Waste;
+			i_Supply = [];
+			i_Supply.push({name: "c_LNG", value: 		this.c_LNG,		n_machine: Math.floor((this.c_LNG - getAValue("c_LNG", l_Base)) /  getAValue("c_LNG", l_PP))  });
+			i_Supply.push({name: "c_Coal", value: 		this.c_Coal,	n_machine: Math.floor((this.c_Coal - getAValue("c_Coal", l_Base)) /  getAValue("c_Coal", l_PP))  });
+			i_Supply.push({name: "c_Oil" , value: 		this.c_Oil,		n_machine: Math.floor((this.c_Oil - getAValue("c_Oil", l_Base)) /  getAValue("c_Oil", l_PP))  });
+			i_Supply.push({name: "c_Nuclear", value: 	this.c_Nuclear,	n_machine: Math.floor((this.c_Nuclear - getAValue("c_Nuclear", l_Base)) /  getAValue("c_Nuclear", l_PP))  });
+			i_Supply.push({name: "c_Hydro", value: 		this.c_Hydro,	n_machine: Math.floor((this.c_Hydro - getAValue("c_Hydro", l_Base)) /  getAValue("c_Hydro", l_PP))  });
+			i_Supply.push({name: "c_Solar", value: 		this.c_Solar,	n_machine: Math.floor((this.c_Solar - getAValue("c_Solar", l_Base)) /  getAValue("c_Solar", l_PP))  });
+			i_Supply.push({name: "c_Bio" , value: 		this.c_Bio,		n_machine: Math.floor((this.c_Bio - getAValue("c_Bio", l_Base)) /  getAValue("c_Bio", l_PP))  });
+			i_Supply.push({name: "c_Wind", value: 		this.c_Wind,	n_machine: Math.floor((this.c_Wind - getAValue("c_Wind", l_Base)) /  getAValue("c_Wind", l_PP))  });
+			i_Supply.push({name: "c_Waste", value: 		this.c_Waste,	n_machine: Math.floor((this.c_Waste - getAValue("c_Waste", l_Base)) /  getAValue("c_Waste", l_PP))  });
+
+			totalEnergy = 0;
+			for(var k = 0; k <i_Supply.length; k++){
+				totalEnergy += i_Supply[k].value;
+			}
+			// console.log(this.CO2);
+			this.r_Cost = sumUp(i_Supply, l_cost) / this.r_Total;
+			this.r_CostP = ((this.r_Cost - 2.54) >= 0 ? "+" : "") + ((this.r_Cost - 2.54) / 2.54 * 100).toFixed(1) + "%";
+			this.r_CO2 = sumUp(i_Supply, l_CO2);
+			this.r_CO2P = (this.r_CO2 - 49032000 >= 0 ? "+" : "") + ((this.r_CO2 - 49032000) / 49032000 * 100).toFixed(1) + "%";
+			this.r_GAP =  (328.594 - totalEnergy) > 0 ? Math.abs(328.594 - totalEnergy).toFixed(1) : "Demand Meet";
+			this.r_GAPP = (328.594 - totalEnergy) > 0 ? (Math.abs(328.594 - totalEnergy) / 328.594 * 100 ).toFixed(1) : 0;			
+			(328.594 - totalEnergy) > 0 ? $(".n_GAP").css("color", "red") : $(".n_GAP").css("color", "grey");
+
+			this.newBuild = "";
+			var flag = true;
+			$(".slo").hide();
+			for(var i = 0; i < i_Supply.length; i++){
+				if(i_Supply[i].n_machine > 0){
+					if(flag){
+						this.newBuild += "New Build: <br>";	
+						flag = false;
+					}
+					this.newBuild += i_Supply[i].n_machine + " " + getChineseName(i_Supply[i].name) + " Unit;<br>"
+					if(i_Supply[i].name === "c_LNG" || i_Supply[i].name === "c_Coal" || i_Supply[i].name === "c_Oil"){
+						$(".slo_hea").fadeIn('slow');
+					}
+					else if(i_Supply[i].name === "c_Nuclear"){
+						$(".slo_nuk").fadeIn('slow');
+					}
+					else if(i_Supply[i].name === "c_Hydro"){
+						$(".slo_wat").fadeIn('slow');	
+					}
+					else if(i_Supply[i].name === "c_Solar"){
+						$(".slo_sol").fadeIn('slow');	
+					}
+					else if(i_Supply[i].name === "c_Wind"){
+						$(".slo_win").fadeIn('slow');	
+					}
+				}
+			}
+
+			updateBar();
+		}
+	}
+	//selector
+	// document.getElementById("control")
+	tangle = new Tangle(document, {
+		initialize: function(){},
+		update: function(){}
+	} );
+	switchTangle("BaseCase");	
+};
+
+Tangle.formats.f_control = function (value) {
+	var left = "";
+	for(var i = 1; i < 4; i++){
+		if(Math.abs(value) < Math.pow(10, i)){
+			left += "&nbsp;&nbsp;";
+		}
+	}
+	return left + value;
+};
+
+
+
+Tangle.formats.f_round = function (value) {
+	function numberWithCommas(x) {
+    	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	}
+	return numberWithCommas(Math.round(value));
+};
+
+var margin = {top:10, left: 50, right: 30, bottom: 30};
+var w = 960 - margin.left - margin.right; 
+var h = 200 - margin.top - margin.bottom;
+
+var svg = d3.select("body")
+	.append("svg")
+	.attr("width", w + margin.left + margin.right)
+	.attr("height", h + margin.top + margin.bottom)
+	.append("g")
+	.attr("transform", "translate(" + margin.left + ", " + margin.top + ")");// will only need to use width and height directily, since it has been transformed
+
+
+var demand = 300; // magic number
+
+var x = d3.scale.linear()
+	.domain([0, i_Supply.length])
+	.range([0, w]);
+
+var y = d3.scale.linear()
+	.domain([0, demand]) 
+	.range([0, h]);
+	// 	.domain([0, d3.max(i_Supply, function(d){ return d.value; }) ]) 
+
+
+
+var color = d3.scale.category10();
+
+svg.selectAll(".s_bar")
+	.data(i_Supply)
+	.enter()
+	.append("rect")
+	.attr("class", "s_bar")
+	.attr("x", function(d, i){
+		return x(i);
+	})
+	.attr("y", function(d, i){
+		return h;
+	})
+	.attr("width", 10)
+	.attr("height", function(d, i){
+		return y(d.value);
+	}).style("fill", function(d, i){
+		return color(i);
+	});
+
+
+var l_percent = svg.selectAll(".l_percent")
+		.data(i_Supply)
+		.enter()
+		.append("text")
+		.attr("class", "l_percent")
+		.attr("x", function(d, i){
+			return x(i);
+		}).attr("y", function(d, i){
+			// console.log(d);
+			return h - y(d.value);
+		});
+
+
+var updateBar = function(){
+	// console.log("getting update");
+	svg.selectAll(".s_bar")
+		.data(i_Supply)
+		.transition(2000)
+		.attr("y", function(d, i){
+			return h - y(d.value);
+		})
+		.attr("height", function(d, i){
+			return y(d.value);
+		});
+
+	l_percent
+		.data(i_Supply)
+		.transition()		
+		.attr("x", function(d, i){
+			return x(i) + 10;
+		})
+		.attr("y", function(d, i){
+			// console.log(d);
+			return h - y(d.value) - 2;
+		})
+		.text(function(d, i){
+			// console.log(totalEnergy);
+			return d.name.split("_")[1].substring(0, 3) + " " + (d.value / totalEnergy * 100).toFixed(2) + "%";
+		})
+		.attr("text-anchor", 'middle')
+		.attr("font-size", "14px");
+}
+
+
+
+</script>
+	<div class= "c_title">
+		<span class= "n_title" >2025</span> Power Supply Situation
+		<span class= "p_title" ></span>
+	</div>
+	<div class= "c_cost">
+		<span class= "n_cost" data-var="r_Cost" data-format="p2"></span> NT$/kWh (vs. 2012 ： 
+		<span class= "p_cost" data-var="r_CostP" ></span>)
+	</div>
+	<div class= "c_CO2">
+		<span class= "n_CO2" data-var="r_CO2" data-format="f_round"></span> tons of CO2(vs. 2012 ： 
+		<span class= "p_CO2" data-var="r_CO2P" ></span>)
+	</div>
+	<div class= "c_GAP">
+		<span class= "n_GAP" data-var="r_GAP"></span> TWh Power Shortage
+		<span class= "p_GAP" data-var="r_GAPP" ></span> %
+	</div>
+	<div class= "newBuild">
+		<span class= "" data-var="newBuild"></span>
+		<!-- <span class= "" data-var="r_GAPP" ></span> % -->
+	</div>
+
+
+<div class="container">
+	<div class="row">		
+		<!-- opening -->
+		<div class="col-lg-12 explanation">
+			<div id="control" class="f_selection col-lg-4">
+				<!-- <h5> -->
+				<p>Heat（Total <span data-var="r_Heat" data-format="f_round"></span> TWh  ）：</p>
+
+				<ul>
+					<li><span data-var="c_LNG" class="large TKAdjustableNumber" data-min="104.907" data-max="500" data-step="1" data-format="f_control"></span> TWh - LNG</li>
+					<li><span data-var="c_Coal" class="large TKAdjustableNumber" data-min="55.043" data-max="500" data-step="1" data-format="f_control"></span> TWh - Coal</li>
+					<li><span data-var="c_Oil" class="large TKAdjustableNumber" data-min="4.088" data-max="500" data-step="1" data-format="f_control"></span> TWh - Oil</li>
+				</ul>
+
+				<p>Nuclear：</p>
+
+				<ul>
+				<li><span data-var="c_Nuclear" class="large TKAdjustableNumber" data-min="15.284" data-max="500" data-step="1" data-format="f_control"></span> TWh - Nuclear </li>
+				</ul>
+
+				<p>Renewable Energy（Total <span data-var="r_Renew" data-format="f_round"></span> TWh）：</p>
+
+				<ul>
+					<li><span data-var="c_Hydro" class="large TKAdjustableNumber" data-min="7.598" data-max="500" data-step="1" data-format="f_control"> </span> TWh - Water</li>
+					<li><span data-var="c_Solar" class="large TKAdjustableNumber" data-min="0.071" data-max="500" data-step="1" data-format="f_control"></span> TWh - Solar</li>
+					<li><span data-var="c_Wind" class="large TKAdjustableNumber" data-min="0.471" data-max="500" data-step="1" data-format="f_control"></span> TWh - Wind</li>
+					<li><span data-var="c_Bio" class="large TKAdjustableNumber" data-min="1.236" data-max="500" data-step="1" data-format="f_control"></span> TWh - Biomass</li>
+					<li><span data-var="c_Waste" class="large TKAdjustableNumber" data-min="3.004" data-max="500" data-step="1" data-format="f_control"></span> TWh - Waste  </li>
+				</ul>
+
+				<p>Total Energy Produced：<span data-var="r_Total" data-format="f_round"></span> TWh</p>
+				<ul>
+					<li>CO2 emission：<span data-var="r_CO2" data-format="f_round"></span> tons</li>
+					<li>Energy Cost： <span data-var="r_Cost" data-format="p2"></span> NT$ / kWh</li>
+					
+				</ul>
+				<!-- </h5> -->
+			</div>
+	<div class="f_form col-lg-6">
+
+	<form>
+
+		<div>
+			<label>
+				<input type="radio" name="mode" value="BaseCase" checked>
+				<!-- <p> -->			
+					No New Power Plant Built
+					<ul>
+					（ + 0 Generator ）
+					<!-- ；電價：2.54；CO2：42m tons）：				 -->
+						<!-- <li>火力（47%；天然氣：30%、煤：16%、油：1%），</li>
+						<li>核能 (50%)，</li>
+						<li>再生能源（3%；水力：2%、垃圾：1%）(缺口：）</li> -->
+					</ul>
+				<!-- </p> -->
+			</label>
+		</div>
+		<div>
+			<label>
+				<input type="radio" name="mode" value="NukeCase">
+				<!-- <p> -->
+					Nuclear Only 
+					<ul>
+					（ +20 Generator ）
+
+					<!-- ；電價：1.71；CO2：42m tons）：				 -->
+						<!-- <li>火力（47%；天然氣：30%、煤：16%、油：1%），</li>
+						<li>核能 (50%)，</li>
+						<li>再生能源（3%；水力：2%、垃圾：1%）(缺口：）</li> -->
+					</ul>
+				<!-- </p> -->
+			</label>
+		</div>
+		<div>
+			<label><input type="radio" name="mode" value="HeatCase">
+				<!-- <p> -->
+					LNG Only 
+				<ul>
+					（ +60 LNG Generator ）
+					<!-- ；電價：2.84；CO2：73m tons）： -->
+					<!-- <li>火力（92%；天然氣：75%、煤：16%、油：1%），</li>
+					<li>核能 (4%)，</li>
+					<li>再生能源（4%；水力：2%、風力：1%、垃圾：1%）(缺口：）</li> -->
+				</ul>
+				<!-- </p> -->
+			</label>
+		</div>
+		<div>
+			<label><input type="radio" name="mode" value="TaiPCase">
+				<!-- <p> -->
+					TaiPower Development Plan #10109
+				<ul>
+					（ +8 Coal, +6 LNG, + 2 Nuclear, 250 Wind turbine ）
+					<!-- ；電價：2.67；CO2：51m tons）： -->
+					<!-- <li>火力（79%；天然氣：48%、煤：22%、油：10%），</li>
+					<li>核能 (16%)，</li>
+					<li>再生能源（6%；水力：3%、風力：2%、垃圾：1%）(缺口：85TWH）</li> -->
+				</ul>
+				<!-- </p> -->
+			</label>
+		</div>
+		<div>
+			<label><input type="radio" name="mode" value="WindCase">
+				<!-- <p> -->
+					Wind Only
+				<ul>
+					（ +13,200 Off-shore Wind turbine ）
+					<!-- ；電價：3.77；CO2：42m tons）： -->
+		<!-- 			<li>火力（47%；天然氣：30%、煤：16%、油：1%），</li>
+					<li>核能 (4%)，</li>
+					<li>再生能源（48%；水力：2%、風力：45%、垃圾：1%）(缺口：）</li>
+		 -->		</ul>
+				<!-- </p> -->
+			</label>
+		</div>
+		<div>
+			<label><input type="radio" name="mode" value="SolarCase">
+				<!-- <p> -->
+					Solar Only
+				<ul>
+					（ +990 km2 Solar Panel ）
+					<!-- ；電價：5.09；CO2：42m tons）：		 -->
+		<!-- 			<li>火力（47%；天然氣：30%、煤：16%、油：1%），</li>
+					<li>核能 (4%)，</li>
+					<li>再生能源（49%；水力：2%、太陽能：45%、風力：1%、垃圾：1%）(缺口：0TWH）</li>
+		 -->		
+				</ul>
+				<!-- </p> -->
+			</label>
+		</div>	
+	</form>
+</div>
+		</div>
+
+	<!-- <div clas="img_nuc" style="background-image: url(http://www.chinatimes.com/newsphoto/2013-04-19/656/20130419004118.jpg); "></div>
+	<div clas="img_wat" style="background-image: url(http://www.tvbs.com.tw/FILE_DB/newsphoto/sunkiss/200912/sunkiss-20091228153606.JPG); "></div>
+	<div clas="img_hea" style="background-image: url(http://pic.pimg.tw/sw2mm/cbf98917ea166f374d7afd17251c14fa.jpg); "></div>
+	<div clas="img_win" style="background-image: url(http://news.cts.com.tw/photo/cts/201305/201305021235889_m.jpg); "></div>
+	<div clas="img_sol" style="background-image: url(http://news.cts.com.tw/photo/udn/201012/201012240638210_m.jpg); "></div> -->
+
+
+	<!-- <div class="slo slo_hea">反火力：大園鄉民，反對林口電廠擴建</div>
+	<div class="slo slo_nuk">反核四：不要讓台灣，成為下一座福島</div>
+	<div class="slo slo_win">反苑裡風力：瘋車殺人，立即停工</div>
+	<div class="slo slo_sol">反太陽能：誓死反對社區內設置太陽能發電</div>
+	<div class="slo slo_wat">反高台水庫：誓死守護家園</div> -->
+	
+	
+	
+	</div>
+</div>
+
+
+
+<script type="text/javascript">
+	window.onload = function(){
+		setUpTangle();
+	}
+
+	$('input:radio').change(function(){
+		// console.log(this.value);
+		switchTangle(this.value);
+		// $('#' + this.id)
+	});
+</script>
+
+</body>
+<style type="text/css">
+label ul{
+	font-size: 14px;
+}
+.large {
+	font-size: 20px;
+}
+.c_title{
+	position: absolute;
+	margin-left: 900px;
+	margin-top: -200px;
+	font-size: 10px;
+}
+.c_cost{
+	position: absolute;
+	margin-left: 900px;
+	margin-top: -150px;
+	font-size: 10px;
+}
+.c_CO2{
+	position: absolute;
+	margin-left: 900px;
+	margin-top: -100px;
+	font-size: 10px;
+}
+.c_GAP{
+	position: absolute;
+	margin-left: 900px;
+	margin-top: -50px;
+	font-size: 10px;
+}
+.n_cost, .n_CO2, .n_title, .n_GAP{
+	font-size: 40px;
+}
+.p_cost, .p_CO2, .p_GAP{
+	font-size: 12px;
+}
+.newBuild{
+	position: absolute;
+	margin-left: 900px;
+	margin-top: 0px;
+	font-size: 33px;
+	color: grey;
+}
+.slo{
+	font-size: 60px;
+	display: none;
+}
+</style>
+</html>
