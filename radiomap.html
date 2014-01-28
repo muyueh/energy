@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>核電廠疏散範圍</title>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<meta charset="utf-8">
+
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+<script type="text/javascript" src="./Tangle-0.1.0/Tangle.js"></script>
+
+<link rel="stylesheet" href="./Tangle-0.1.0/TangleKit/TangleKit.css" type="text/css">
+<script type="text/javascript" src="./Tangle-0.1.0/TangleKit/mootools.js"></script>
+<script type="text/javascript" src="./Tangle-0.1.0/TangleKit/sprintf.js"></script>
+<script type="text/javascript" src="./Tangle-0.1.0/TangleKit/BVTouchable.js"></script>
+<script type="text/javascript" src="./Tangle-0.1.0/TangleKit/TangleKit.js"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+
+<script src="https://togetherjs.com/togetherjs-min.js"></script>
+
+<script>
+
+var map;
+var circles;
+var markers;
+var radius_m = 4 * 60 * 60 * 4; // m
+var phour; // controlled by tangle
+var wspeed; // controlled by tangle
+
+var nuclist = {};
+
+function setUpTangle () {
+
+	var element = document.getElementById("text");
+
+	var tangle = new Tangle(element, {
+		initialize: function () {
+				this.speed = 4; // m/s
+				this.hour = 1; // hour
+		},
+		update: function () {
+			phour = this.hour;
+			wspeed = this.speed;
+
+			radius_m = this.hour * 60 * 60 * this.speed; // m
+			update_circle();
+			this.radius_k = Math.floor(radius_m / 1000);
+			this.area = Math.floor((radius_m / 1000) * (radius_m / 1000) * Math.PI);
+			}
+	});
+}
+
+
+nuclist['1'] = {
+	name: "核一廠",
+	center: new google.maps.LatLng(25.286747, 121.587753)
+}
+nuclist['2'] = {
+	name: "核二廠",
+	center: new google.maps.LatLng(25.20267, 121.662555)
+}
+nuclist['3'] = {
+	name: "核三廠",
+	center: new google.maps.LatLng(21.958092, 120.751612)
+}
+nuclist['4'] = {
+	name: "核四廠",
+	center: new google.maps.LatLng(25.03861, 121.92417)
+}
+
+
+
+function initialize() {
+	var mapOptions = {
+		zoom: 9,
+		center: new google.maps.LatLng(25.053451,121.56076),
+		mapTypeId: google.maps.MapTypeId.ROADMAP,
+		styles: [
+			{
+			"featureType": "road",
+			"stylers": [
+				{ "visibility": "off" }
+			]
+			},{
+			"featureType": "transit",
+			"stylers": [
+				{ "visibility": "off" }
+			]
+			},{
+			"featureType": "landscape.natural.terrain",
+			"stylers": [
+				{ "visibility": "on" },
+				{ "lightness": -100 }
+			]
+			},{
+			"featureType": "administrative",
+			"elementType": "geometry",
+			"stylers": [
+				{ "visibility": "on" },
+				{ "hue": "#ff0000" },
+				{ "color": "#ff0000" },
+				{ "weight": 0.9 }
+			]
+			}
+		]
+	};
+	// http://gmaps-samples-v3.googlecode.com/svn/trunk/styledmaps/wizard/index.html
+	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+
+	for(var plant in nuclist){
+		var circle = {
+			strokeColor: '#000000',
+			strokeOpacity: 0.8,
+			strokeWeight: 1,
+			fillColor: '#FF0000',
+			fillOpacity: 0.02,
+			map: map,
+			center: nuclist[plant].center,
+			radius: radius_m
+		};
+		var marker = {
+			position: nuclist[plant].center,
+			map: map,
+			title: nuclist[plant].name,
+			icon: "./images/radiation.png"
+		}
+
+		markers = new google.maps.Marker(marker);
+	}
+	//leave citcles outside for loop so it only draws no.4
+		circles = new google.maps.Circle(circle);
+}
+
+var ocircle = [];
+function overlapArea (){
+
+
+	for (var i = 0; i < ocircle.length; i++){
+		ocircle[i].setMap(null);
+	}
+	ocircle = [];
+
+	// for(var plant in nuclist){		
+
+		for(var i = phour; i > 0; i--){
+			var circle = {
+				strokeWeight: 0,
+				fillColor: '#FF0000',
+				fillOpacity: 0.02,
+				map: map,
+				center: nuclist["4"].center, // only no.4
+				radius: (phour - i) * wspeed * 60 * 60
+			};
+			ocircle.push(new google.maps.Circle(circle));
+		}
+	// }
+
+
+}
+
+
+function update_circle() {	
+	for(var plant in nuclist){
+		circles.set("radius", radius_m);		
+	}
+	overlapArea();	
+}
+
+ google.maps.event.addDomListener(window, 'load', initialize);
+
+
+
+</script>
+</head>
+<body onload="setUpTangle();">
+	<div class= "map">
+		<div id="map-canvas"></div>
+		<div id="text">
+			<h3>分析： 輻射塵速度</h3>
+
+			<ul>
+				<li><p>在不考慮地形屏障、氣溫、雨量的情況下</p></li>
+				<li><p>假設平均風速為<span data-var="speed" class="TKAdjustableNumber" data-min="0" data-max="5"></span>公尺/秒</p></li>
+				<li><p>經過<span data-var="hour" class="TKAdjustableNumber" data-min="0" data-max="50"></span>小時後</p></li>
+				<li><p>半徑為 <span data-var="radius_k"></span>公里，面積為 <span data-var="area"></span> 平方公里</p></li>
+			</ul>
+		</div>
+	</div>
+	
+	<button id="togetherJS" class="btn btn-danger btn-xs" onclick="TogetherJS(this); return false;">
+  私人討論串
+</button> 
+<button class="btn btn-danger btn-xs" onclick="window.open('http://muyueh.com/see/nuk/radiationmap.html#&togetherjs=zknpSAnjHJ')">
+  <span class="glyphicon glyphicon-user "></span>公開討論串
+</button>
+
+</body>
+<style>
+#map-canvas {
+	margin: 0;
+	padding: 0;
+	width: 600px;
+	height: 400px;
+}
+</style>
+</html>
