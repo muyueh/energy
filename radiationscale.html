@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Radiation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css">
+  <script src="http://code.jquery.com/jquery.js"></script>
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="./Tangle-0.1.0/Tangle.js"></script>
+
+  <link rel="stylesheet" href="./Tangle-0.1.0/TangleKit/TangleKit.css" type="text/css">
+  <script type="text/javascript" src="./Tangle-0.1.0/TangleKit/mootools.js"></script>
+  <script type="text/javascript" src="./Tangle-0.1.0/TangleKit/sprintf.js"></script>
+  <script type="text/javascript" src="./Tangle-0.1.0/TangleKit/BVTouchable.js"></script>
+  <script type="text/javascript" src="./Tangle-0.1.0/TangleKit/TangleKit.js"></script>
+  
+  <script src="https://togetherjs.com/togetherjs-min.js"></script>
+</head>
+<body>
+<img src="http://muyueh.com/seeall/image/radiation.jpeg" style="display:none;">
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-36523378-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+
+var tangle;
+var flagSort = false;
+var unit = 1; // Sv: mSv : μSv : = 0,001 : 1 : 1000
+
+var currentSelect;
+
+var danceTangle = function(){
+
+
+  var baseDance = {
+
+
+    initialize: function () {
+      this.u_lanyu =        0.000043;
+      this.u_taipei =       0.000062;
+      this.u_alishan =      0.000102;
+      this.u_banana =       0.0001;
+      this.u_CRT =          0.001;
+      this.u_XChest =       0.1;
+      this.u_EPA =          1;
+      this.u_CT =          10;
+      this.u_smoke =       36;
+      this.u_USwor =       50;
+      this.u_C100 =       100;
+      this.u_rHouse =     244;
+      this.u_C500 =       500;
+      this.u_C1000 =     1000;
+      
+      this.u_C2000 =     2000;
+      this.treatment_C2000 = false;
+      this.u_C3000 =     3000;      
+      this.u_C5000 =     5000;
+      
+      this.u_C6000 =     6000;
+      this.treatment_C6000 = false;
+      this.u_C8000 =     8000;
+      this.u_C10000 =   10000;
+      this.u_C30000 =   30000;
+      this.u_C50000 =   50000;
+      this.u_Rthera =   60000;
+
+
+      this.u_fukushima =    0.019;
+      this.u_fukushima_shelter_radio =  0.4;
+
+
+      this.t_lanyu =    1;
+      this.t_taipei =   1;
+      this.t_alishan =  1;
+      this.t_banana =   1;
+      this.t_CRT =      1;
+      this.t_XChest =   1;
+      this.t_EPA =      1;
+      this.t_CT =       1;
+      this.t_smoke =    1;
+      this.t_USwor =    1;
+      this.t_C100 =     1;
+      this.t_rHouse =   1;
+      this.t_C500 =     1;
+      this.t_C1000 =    1;
+      this.t_Rthera =   1;
+      this.t_C2000 =    1;
+      this.t_C3000 =    1;
+      
+      this.t_C5000 =    1;
+      this.t_C6000 =    1;
+      this.t_C8000 =    1;
+      this.t_C10000 =    1;
+      this.t_C30000 =    1;
+      this.t_C50000 =    1;
+
+
+      this.t_d_fukushima = 1;
+      this.t_y_fukushima = 0;
+      this.t_fukushima_shelter =  16;
+      this.t_fukushima_outside =  8;
+
+      this.change_unit = false;
+
+    },
+    update: function () {
+
+      var clone = {};
+
+      for(ele in this){
+        clone[ele] = this[ele];
+      }
+
+      this.unit = unit;
+      
+      this.v_lanyu =    this.t_lanyu * this.u_lanyu * this.unit;
+      this.v_taipei =   this.t_taipei * this.u_taipei * this.unit;
+      this.v_alishan =  this.t_alishan * this.u_alishan * this.unit;
+      this.v_banana = this.t_banana * this.u_banana * this.unit;
+
+      //watch! this is t_!
+      this.t_fukushima_shelter = 24 - this.t_fukushima_outside;
+
+
+      this.v_fukushima =  ((this.t_y_fukushima * 365 + this.t_d_fukushima) * (this.t_fukushima_shelter * this.u_fukushima_shelter_radio * this.u_fukushima + this.t_fukushima_outside * this.u_fukushima))*this.unit ; // day
+      this.v_CRT = this.u_CRT  * this.t_CRT * this.unit;//year
+      this.v_XChest = this.u_XChest * this.t_XChest * this.unit;
+      this.v_EPA = this.u_EPA * this.t_EPA * this.unit;
+      this.v_CT = this.u_CT * this.t_CT * this.unit;
+      this.v_smoke = this.u_smoke * this.t_smoke * this.unit;
+      this.v_USwor = this.u_USwor * this.t_USwor * this.unit;
+      this.v_C100 = this.u_C100 * this.t_C100 * this.unit;
+      this.v_rHouse =  this.u_rHouse * this.t_rHouse * this.unit;
+      this.v_C500 = this.u_C500 * this.t_C500 * this.unit;
+      this.v_C1000 = this.u_C1000 * this.t_C1000 * this.unit;
+      this.v_Rthera = this.u_Rthera * this.t_Rthera * this.unit;
+
+      this.v_C3000 = this.u_C3000 * this.t_C3000 * this.unit;
+      this.v_C2000 = this.u_C2000 * this.t_C2000 * this.unit;
+
+      //watch! this is d_!
+      this.d_C2000 = (this.treatment_C2000)? 100 : 50 ;
+      this.d_C6000 = (this.treatment_C6000)? 95 : 50;
+      
+      this.v_C5000 = this.u_C5000 * this.t_C5000 * this.unit;
+      this.v_C6000 = this.u_C6000 * this.t_C6000 * this.unit;
+      this.v_C8000 = this.u_C8000 * this.t_C8000 * this.unit;
+      this.v_C10000 = this.u_C10000 * this.t_C10000 * this.unit;
+      this.v_C30000 = this.u_C30000 * this.t_C30000 * this.unit;
+      this.v_C50000 = this.u_C50000 * this.t_C50000 * this.unit;
+
+
+      if(flagSort){ // so that only start to sort when finished loading
+        sortUnorderedList();  
+        setTimeout(function(){//strange bug that requires it to sort twice
+          sortUnorderedList();  
+        }, 100);
+      }
+      
+      // console.log(unit);
+      console.log(this.change_unit);
+
+      if(!this.change_unit){
+        $("#" + currentSelect).css("color", "black");  
+      }
+      
+      
+      for(attr in clone){
+        if( !this.change_unit &&  clone[attr] !== this[attr]){
+          currentSelect = "id_" + attr.split("v_")[1];
+          // console.log($("#" + currentSelect));
+          $("#" + currentSelect).css("color", "red");
+
+          
+          break;
+        }
+      }
+
+    this.change_unit = false;
+      
+    }
+  }
+
+  tangle.setModel(baseDance);
+  
+}
+
+
+var setUpTangle = function(){
+
+  var element = document.getElementById("radiationlist");
+
+  tangle= new Tangle(element, {
+    initialize: function(){},
+    update: function(){}
+  });
+  danceTangle();
+  flagSort = true; 
+};
+
+
+window.onload = function(){
+  setUpTangle();
+}
+
+
+
+
+
+var sortUnorderedList = function(){ 
+  //bubble sort
+  var flag = true;
+  while(flag){
+    // console.log("while");
+    flag  = false;
+    for(var i = 0; i < $("li").length - 1; i++){
+      var a = parseFloat(($("li").get(i).getElementsByTagName("span")[0].getElementsByTagName("span")[0].getElementsByTagName("span")[0].className));
+
+      var b = parseFloat(($("li").get(i + 1).getElementsByTagName("span")[0].getElementsByTagName("span")[0].getElementsByTagName("span")[0].className));
+      if(a > b){
+        $("li")[i + 1].parentNode.insertBefore($("li")[i]);
+        flag = true;
+      }
+    }
+  // console.log("sorting");
+  }  
+}
+
+Tangle.formats.f_compare = function (value) {
+
+  var left = "";
+  var p = 5;
+  for(var i = 1; i < 9; i++){
+    if(Math.abs(value) < Math.pow(10, i)){
+      left += "_";      
+    }
+    else{
+      p++;
+    }
+  }
+
+
+  var thousandSpace = function(){
+
+    var string = left + value.toFixed(6).slice(0, p) + " " +value.toFixed(6).slice(p);
+    string = string.slice(0, 3) + " " + string.slice(3, 6) + " " +  string.slice(6);  
+    string = string.replace(/_/g, "&nbsp");
+
+    for(var k = 0; k < string.length; k++){
+      if(!isNaN(string[k]) && string[k] != 0){
+        string =  "<span class='" + value + "'></span><span class='RDigit'>" + string.slice(0, k) + "</span><span class='FDigit'>" + string.slice(k, k + 1)  + "</span><span class='RDigit'>"  + string.slice(k + 1) + "</span>";
+        // console.log(string);
+        break;
+      }
+    }
+
+    return string;
+  };
+  
+  return thousandSpace();
+
+};
+
+</script>
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+
+    <div class="col-lg-12"> 
+      <h3>輻射劑量換算表</h3>
+      <p>比顏色表述力更強的單位：數字。參考目前既有的輻射劑量表，都是使用顏色與形狀作為不同數值的區別單位。劑量表的難題，在於數量級拉得很寬（0.00001 - 50,000)，但每一個數量級的差距有很大（x10）。好在人類已經有一個發展已久，而且熟悉熟悉的系統：十進位系統。此視覺嘗試凸顯十進位系統內涵的資訊。</p>
+      <p><a href="https://docs.google.com/spreadsheet/pub?key=0AgcMEBpS0DppdEZBMUQ5TFIzelBZeHJtLVZBc3doN0E&amp;output=html">輻射數據來源列表</a></p>
+    </div>
+    <div class="btn-group" data-toggle="buttons">
+      <label class="btn btn-primary " id ="muSv">
+        <input type="radio" name="options" id="option1"> μSv
+      </label>
+      <label class="btn btn-primary active" id ="mSv">
+        <input type="radio" name="options" id="option2"> mSv
+      </label>
+      <!-- <label class="btn btn-primary" id ="Sv">
+        <input type="radio" name="options" id="option2"> Sv
+      </label> -->
+    </div>
+
+      <div id="analysis">
+
+        
+        <ul id="radiationlist">
+          <li id="id_lanyu">
+            <span data-var="v_lanyu" data-format="f_compare"></span> <span class="showunit"></span> ：站在蘭嶼掩埋場外面
+            <span data-var="t_lanyu" class="TKAdjustableNumber" data-min="1" data-max="500"></span> 小時
+            <!-- （來源：<a href="http://www.trmc.aec.gov.tw/utf8/big5/">原能會輻射監測中心</a>） -->
+          </li>
+          <li id ="id_taipei">
+            <span data-var="v_taipei" data-format="f_compare"></span> <span class="showunit"></span> ：站在台北捷運港乾站外面
+            <span data-var="t_taipei" class="TKAdjustableNumber" data-min="1" data-max="500"></span> 小時
+            <!-- （來源：<a href="http://www.trmc.aec.gov.tw/utf8/big5/">原能會輻射監測中心</a>） -->
+
+            
+          </li>
+          <li id ="id_banana">
+            <span data-var="v_banana" data-format="f_compare"></span> <span class="showunit"></span> ：吃香蕉
+            <span data-var="t_banana" class="TKAdjustableNumber" data-min="1" data-max="500"></span> 根
+          </li>
+          <li id ="id_alishan">
+            <span data-var="v_alishan" data-format="f_compare"></span> <span class="showunit"></span> ：站在阿里山上
+            <span data-var="t_alishan" class="TKAdjustableNumber" data-min="1" data-max="500"></span> 小時
+            <!-- （來源：<a href="http://www.trmc.aec.gov.tw/utf8/big5/">原能會輻射監測中心</a>） -->
+          </li>
+          <li id ="id_CRT">
+            <span data-var="v_CRT" data-format="f_compare"></span> <span class="showunit"></span> ：使用 CRT 電腦螢幕
+            <span data-var="t_CRT" class="TKAdjustableNumber" data-min="1" data-max="500"></span> 年
+          </li>
+          <li id ="id_XChest">
+            <span data-var="v_XChest" data-format="f_compare"></span> <span class="showunit"></span> ：胸腔 X 光
+            <span data-var="t_XChest" class="TKAdjustableNumber" data-min="1" data-max="500"></span> 次
+          </li>
+           <li id ="id_fukushima">
+            <span data-var="v_fukushima" data-format="f_compare"></span> <span class="showunit"></span> ：住在福島 30 km 裡內，空氣劑量為 
+            <span data-var="u_fukushima" class="TKAdjustableNumber" data-min="0" data-max="0.019" data-step ="0.001" data-format="p3"></span> mSv /h ，為期
+            <span data-var="t_y_fukushima" class="TKAdjustableNumber" data-min="0" data-max="30" data-step ="1"></span> 年又 
+            <span data-var="t_d_fukushima" class="TKAdjustableNumber" data-min="1" data-max="10000" data-step ="1"></span> 天
+            ：
+            <span data-var="t_fukushima_outside" class="TKAdjustableNumber" data-min="0" data-max="24" data-step ="1"></span> 小時野外（0 遮蔽)，
+            <span data-var="t_fukushima_shelter" data-min="0" data-max="24" data-step ="1"></span> 小時室內 （
+            <span data-var="u_fukushima_shelter_radio" class="TKAdjustableNumber" data-min="0.1" data-max="1" data-step ="0.1" data-format="p3"></span> 遮蔽)
+            <!-- （來源：<a href="http://ramap.jaea.go.jp/map/">日本官方：輻射劑量等於分佈地圖擴展網站</a>） -->
+          </li>
+          <li id ="id_EPA">
+            <span data-var="v_EPA" data-format="f_compare"></span> <span class="showunit"></span> ：EPA 規範一般民眾可以額外接受的人工輻射值
+            <span data-var="t_EPA" class="TKAdjustableNumber" data-min="1" data-max="500"></span> 年
+          </li>
+          <li id ="id_CT">
+            <span data-var="v_CT" data-format="f_compare"></span> <span class="showunit"></span> ：全身電腦斷層掃瞄
+            <span data-var="t_CT" class="TKAdjustableNumber" data-min="1" data-max="500"></span> 次
+          </li>
+          <li id ="id_smoke">
+            <span data-var="v_smoke" data-format="f_compare"></span> <span class="showunit"></span> ：每天 30 根煙，抽 
+            <span data-var="t_smoke" class="TKAdjustableNumber" data-min="1" data-max="500"></span> 年
+          </li>
+          <li id ="id_USwor">
+            <span data-var="v_USwor" data-format="f_compare"></span> <span class="showunit"></span> ：美國規範核電廠工作人員可接受的最高劑量
+            <span data-var="t_USwor" class="TKAdjustableNumber" data-min="1" data-max="500"></span> 年
+          </li>
+          <li id ="id_C100">
+            <span data-var="v_C100" data-format="f_compare"></span> <span class="showunit"></span> ：終身罹癌症的機率會提高 <strong>0.55% </strong>
+            <!-- <span data-var="t_C100" class="TKAdjustableNumber" data-min="1" data-max="500"></span> 年 -->
+          </li>
+          <li id ="id_rHouse">
+            <span data-var="v_rHouse" data-format="f_compare"></span> <span class="showunit"></span> ：住在輻射屋之中 
+            <span data-var="t_rHouse" class="TKAdjustableNumber" data-min="1" data-max="500"></span> 年
+          </li>
+          <!-- <li id ="id_C500">
+            <span data-var="v_C500" data-format="f_compare"></span> <span class="showunit"></span> ：終身罹癌症的機率會提高 <strong>1.1%</strong> 
+          </li>-->
+          <li id ="id_C1000" > 
+            <span data-var="v_C1000" data-format="f_compare"></span> <span class="showunit"></span> ：（單一劑量）<span class="red" >致命：0%-5%，8 週內死亡</span>，症狀為短暫噁心、疲倦、白血球數降低。
+          </li>
+          <li id ="id_C2000">
+            <span data-var="v_C2000" data-format="f_compare"></span> <span class="showunit"></span> ：（單一劑量）<span class="red" >致命：5 - <span data-var="d_C2000"></span> %，6 週內死亡</span>，
+            <span data-var="treatment_C2000" class="TKToggle TKSwitch">
+              <span> 予以</span>
+              <span> 不予 </span>
+            </span>       
+            治療；症狀為流血、掉髮。
+          </li>
+          <!-- <li id ="id_C3000">
+            <span data-var="v_C3000" data-format="f_compare"></span> <span class="showunit"></span> ：噁心，嘔吐及腹瀉 <strong>16.5%</strong>
+          </li> -->
+          <!-- 
+          <li id ="id_C5000">
+            <span data-var="v_C5000" data-format="f_compare"></span> <span class="showunit"></span> ：終身罹癌症的機率會提高<strong> 27.5%</strong> 噁心、嘔吐；若為單次暴射，約有一半的人一個月內會死亡；
+          </li> -->
+
+          <li id ="id_C6000">
+            <span data-var="v_C6000" data-format="f_compare"></span> <span class="showunit"></span> ：（單一劑量）<span class="red" >致命：<span data-var="d_C6000"></span> - 100%， 4 週內死亡 </span>
+            <span data-var="treatment_C6000" class="TKToggle TKSwitch">
+              <span> 予以</span>
+              <span> 不予 </span>
+            </span>       
+            治療
+            ；症狀：噁心、嘔吐；
+            
+            <!-- 若不處理，約 2-4 週內會死亡 -->
+          </li>
+          <li id ="id_C8000">
+            <span data-var="v_C8000" data-format="f_compare"></span> <span class="showunit"></span> ：（單一劑量）<span class="red" >致命：100%， 2 週內死亡</span>；症狀：嚴重嘔吐，帶血腹瀉
+          </li>
+          <!-- <li id ="id_C10000">
+            <span data-var="v_C10000" data-format="f_compare"></span> <span class="showunit"></span> ：（致命）2 週內死亡
+          </li> -->
+          <li id ="id_C30000">
+            <span data-var="v_C30000" data-format="f_compare"></span> <span class="showunit"></span> ：（單一劑量）<span class="red" >致命：100%， 48 小時內死亡</span>；症狀：癲癇、神經失調
+          </li>
+          <li id ="id_C50000">
+            <span data-var="v_C50000" data-format="f_compare"></span> <span class="showunit"></span> ：在車諾比爐心熔燬十分鐘後
+          </li>
+          <li id ="id_Rthera">
+            <span data-var="v_Rthera" data-format="f_compare"></span> <span class="showunit"></span> ：胸腔、頭、頸部放性治療
+            <span data-var="t_Rthera" class="TKAdjustableNumber" data-min="1" data-max="500"></span> 次 （分散成單一 2,000 mSv 劑量，並且高度鎖定目標）
+          </li>
+
+          <!-- 癲癇、發抖，  -->
+          <!-- http://en.wikipedia.org/wiki/Radiation-induced_cancer -->
+          <!-- http://en.wikipedia.org/wiki/Acute_radiation_syndrome -->
+
+          <!-- 輻射屋 -->
+          <!-- http://zh.wikipedia.org/wiki/%E8%BC%BB%E5%B0%84%E9%8B%BC%E7%AD%8B%E4%BA%8B%E4%BB%B6 -->
+
+          
+        </ul>
+      （美國終身離癌機率，男：44%、女：38%；因癌死亡，男：23%、女：19%） （來源：<a href="http://seer.cancer.gov/csr/1975_2009_pops09//results_merged/topic_lifetime_risk.pdf">美國終身罹癌機率</a>）
+          </li>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+$(".showunit").html("mSv");
+$(".btn").click(function(){
+    
+
+    if(this.id === "muSv"){
+      // console.log("hi");
+      unit = 1000;
+      $(".showunit").html("µSv");
+    }
+    else if(this.id === "mSv"){      
+      unit = 1;
+      $(".showunit").html("mSv");
+    }
+    else if(this.id === "Sv"){
+      unit = 0.001;
+    }
+    // danceTangle();
+    tangle.setValues({"unit":unit, "change_unit": true});
+    
+  })
+
+// $("li").mouseover(function(){
+//   console.log(this);
+// });
+
+
+</script>
+
+<style type="text/css">
+.red{
+  /*color: red;*/
+}
+#radiationlist{
+  font-family: monospace;
+}
+.FDigit{
+  font-weight:bold;
+}
+.RDigit{
+  color: #D1D0CE;  
+}
+</style>
+
+</body>
+</html>
