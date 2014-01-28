@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Energy Demand</title>
+<script type="text/javascript" src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+<script type="text/javascript" src="./Tangle-0.1.0/Tangle.js"></script>
+
+<link rel="stylesheet" href="./Tangle-0.1.0/TangleKit/TangleKit.css" type="text/css">
+<script type="text/javascript" src="./Tangle-0.1.0/TangleKit/mootools.js"></script>
+<script type="text/javascript" src="./Tangle-0.1.0/TangleKit/sprintf.js"></script>
+<script type="text/javascript" src="./Tangle-0.1.0/TangleKit/BVTouchable.js"></script>
+<script type="text/javascript" src="./Tangle-0.1.0/TangleKit/TangleKit.js"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+
+<script src="https://togetherjs.com/togetherjs-min.js"></script>
+
+</head>
+<body>
+<img src="http://muyueh.com/seeall/image/demand.jpeg" style="display:none;">
+<script type="text/javascript">
+var margin = {top:10, left: 100, right: 30, bottom: 30};
+var w = 600 - margin.left - margin.right; 
+var h = 300 - margin.top - margin.bottom;
+
+var svg = d3.select("body")
+	.append("svg")
+	.attr("width", w + margin.left + margin.right)
+	.attr("height", h + margin.top + margin.bottom)
+	.append("g")
+	.attr("transform", "translate(" + margin.left + ", " + margin.top + ")")// will only need to use width and height directily, since it has been transformed
+	.attr("class", "lineContainer");
+
+var x = d3.scale.linear()
+	.range([0, w]);
+
+var y = d3.scale.linear()
+	.range([h, 0]); //since the height 0 is top    
+
+
+var forecast_Everyone = [];
+
+var forecast_Taipower = [{source: "TaiP",year: 1996,	consIndus:0, consTotal:134306.7, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 1997,	consIndus:0, consTotal:143290.8, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 1998,	consIndus:0, consTotal:154569.3, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 1999,	consIndus:0, consTotal:160942.6, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2000,	consIndus:0, consTotal:176524.6, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2001,	consIndus:0, consTotal:180504.5, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2002,	consIndus:0, consTotal:190266.4, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2003,	consIndus:0, consTotal:200466, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2004,	consIndus:0, consTotal:218826.4, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2005,	consIndus:0, consTotal:227660.4, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2006,	consIndus:0, consTotal:226151.7, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2007,	consIndus:0, consTotal:233544.4, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2008,	consIndus:0, consTotal:229794.9, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2009,	consIndus:0, consTotal:220817.7, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2010,	consIndus:0, consTotal:237554.4, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2011,	consIndus:0, consTotal:242243.6, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2012,	consIndus:0, consTotal:248775.4321, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2013,	consIndus:0, consTotal:255483.3879, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2014,	consIndus:0, consTotal:262372.2163, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2015,	consIndus:0, consTotal:269446.7944, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2016,	consIndus:0, consTotal:276712.1307, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2017,	consIndus:0, consTotal:284173.3688, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2018,	consIndus:0, consTotal:291835.791, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2019,	consIndus:0, consTotal:299704.822, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2020,	consIndus:0, consTotal:307786.0327, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2021,	consIndus:0, consTotal:316085.1444, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2022,	consIndus:0, consTotal:324608.0325, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2023,	consIndus:0, consTotal:333360.7309, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2024,	consIndus:0, consTotal:342349.4362, consServi: 0, consResid:0 },
+	{source: "TaiP", year: 2025,	consIndus:0, consTotal:351580.512, consServi: 0, consResid:0 } ]
+
+var forecast_GCAA = [{source: "GCAA", year: 1996,	consIndus:0, consTotal: 134306.7, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 1997, consIndus:0, consTotal: 143290.8, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 1998, consIndus:0, consTotal: 154569.3, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 1999, consIndus:0, consTotal: 160942.6, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2000, consIndus:0, consTotal: 176524.6, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2001, consIndus:0, consTotal: 180504.5, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2002, consIndus:0, consTotal: 190266.4, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2003, consIndus:0, consTotal: 200466, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2004, consIndus:0, consTotal: 218826.4, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2005, consIndus:0, consTotal: 227660.4, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2006, consIndus:0, consTotal: 226151.7, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2007, consIndus:0, consTotal: 233544.4, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2008, consIndus:0, consTotal: 229794.9, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2009, consIndus:0, consTotal: 220817.7, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2010, consIndus:0, consTotal: 237554.4, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2011, consIndus:0, consTotal: 242243.6, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2012, consIndus:0, consTotal: 248775.4321, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2013, consIndus:0, consTotal: 255483.3879, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2014, consIndus:0, consTotal: 262372.2163, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2015, consIndus:0, consTotal: 269446.7944, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2016, consIndus:0, consTotal: 276712.1307, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2017, consIndus:0, consTotal: 284173.3688, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2018, consIndus:0, consTotal: 277879.0713, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2019, consIndus:0, consTotal: 271724.1892, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2020, consIndus:0, consTotal: 265705.6347, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2021, consIndus:0, consTotal: 259820.3882, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2022, consIndus:0, consTotal: 254065.4969, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2023, consIndus:0, consTotal: 248438.0736, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2024, consIndus:0, consTotal: 242935.2949, consServi: 0, consResid:0 },
+	{source: "GCAA", year: 2025, consIndus:0, consTotal: 237554.4, consServi: 0, consResid:0 } 
+	]
+
+
+var GDP_YoY  = 0.03;
+var PPL_5y_CAGR = 0.003;
+
+var consByYear = [];
+var projection = function(){
+	consByYear = [
+	{source: "self", year: 1996,	consIndus: 62939, consServi: 27051,	consResid: 27579, consTotal: 134306.7},
+	{source: "self", year: 1997,	consIndus: 68863, consServi: 29317,	consResid: 27840, consTotal: 143290.8},
+	{source: "self", year: 1998,	consIndus: 71931, consServi: 31670,	consResid: 32945, consTotal: 154569.3},
+	{source: "self", year: 1999,	consIndus: 77467, consServi: 32774,	consResid: 32511, consTotal: 160942.6},
+	{source: "self", year: 2000,	consIndus: 86889, consServi: 35890,	consResid: 34543, consTotal: 176524.6},
+	{source: "self", year: 2001,	consIndus: 87097, consServi: 36994,	consResid: 35656, consTotal: 180504.5},
+	{source: "self", year: 2002,	consIndus: 93206, consServi: 38937,	consResid: 37191, consTotal: 190266.4},
+	{source: "self", year: 2003,	consIndus: 98404, consServi: 40818,	consResid: 39100, consTotal: 200466},
+	{source: "self", year: 2004,	consIndus: 105519, consServi: 42815,	consResid: 39588, consTotal: 218826.4},
+	{source: "self", year: 2005,	consIndus: 108545, consServi: 44995,	consResid: 42305, consTotal: 227660.4},
+	{source: "self", year: 2006,	consIndus: 113476, consServi: 46580,	consResid: 42464, consTotal: 226151.7},
+	{source: "self", year: 2007,	consIndus: 119363, consServi: 46737,	consResid: 43124, consTotal: 233544.4},
+	{source: "self", year: 2008,	consIndus: 117067, consServi: 46635,	consResid: 42687, consTotal: 229794.9},
+	{source: "self", year: 2009,	consIndus: 109694, consServi: 45188,	consResid: 43067, consTotal: 220817.7},
+	{source: "self", year: 2010,	consIndus: 124154, consServi: 46976,	consResid: 43427, consTotal: 237554.4},
+	{source: "self", year: 2011,	consIndus: 127776, consServi: 46878, consResid: 44419, consTotal: 242243.6},
+	{source: "self", year: 2012,	consIndus:  128499, consServi: 47062, consResid:  44592, consTotal: 244615.6802}];
+
+	for(var i = 17; i < 35; i++){
+		var thisYear ={};
+		thisYear.source = "self";
+		thisYear.year = consByYear[i - 1].year + 1;
+		thisYear.consIndus = consByYear[i - 1].consIndus * (1 + GDP_YoY);
+		thisYear.consServi = consByYear[i - 1].consServi * (1 +  PPL_5y_CAGR * 4);
+		thisYear.consResid = consByYear[i - 1].consResid * (1 +  PPL_5y_CAGR * 4);
+		thisYear.consTotal = (thisYear.consIndus + thisYear.consServi + thisYear.consResid) / 0.9;
+		consByYear.push(thisYear);
+	}	
+
+	forecast_Everyone = [];
+	forecast_Everyone.push(forecast_Taipower);
+	forecast_Everyone.push(forecast_GCAA);
+	forecast_Everyone.push(consByYear);
+};
+
+projection();
+
+
+
+x.domain([
+	d3.min(forecast_Everyone, function(d){ return d3.min(d, function(v) { return v.year; })}),
+	d3.max(forecast_Everyone, function(d){ return d3.max(d, function(v) { return v.year; })})
+	]);
+y.domain([
+	// d3.min(forecast_Everyone, function(d){ return d3.min(d, function(v) { return v.consTotal; })}),
+	0,
+	d3.max(forecast_Everyone, function(d){ return d3.max(d, function(v) { return v.consTotal; })})
+	]);
+
+var color = d3.scale.category10();
+
+
+var line = d3.svg.line()
+	.interpolate("line")
+	.x(function(d){ 
+		// console.log(d);
+		return x(d.year); })
+	.y(function(d){ return y(d.consTotal); });
+
+var container = svg.selectAll(".dataLine")
+	.data(forecast_Everyone)
+	.enter()
+	.append("path")
+	.attr("d", line)
+	.attr("stroke", function(d, i){ return color(i); })
+	.attr("stroke-width", 2)
+	.attr("fill", "none")
+	.attr("class", "dataLine");
+
+
+svg.selectAll(".lineContainer")
+	.select(".labels")
+	.data(forecast_Everyone)
+	.enter()
+	.append("text")
+	.datum(function(d) { 
+		// console.log(d[d.length - 1].source); 
+		return {source: d[d.length - 1].source, consTotal: d[d.length - 1].consTotal, year: d[d.length - 1].year};
+	})
+	.attr("transform", function(d, i) { 
+		// console.log(d);
+		return "translate(" + x(d.year) + "," + y(d.consTotal) + ")"; })
+	.attr("x", 3)
+	.attr("dy", ".35em")
+	.text(function(d) { 
+		if(d.source === "TaiP"){
+			return "2025-台電預估";
+		}
+		else if(d.source === "GCAA"){
+			return "2025-綠盟-用電零成長";
+		}
+		else if(d.source === "self"){
+			return "2030-你的預估";
+		}
+		return d.source;
+	}).attr("text-anchor", "end")
+	.attr("font-size", "10px")
+	.attr("class", "labels");
+
+
+var redraw = function(){
+	svg.selectAll(".dataLine")
+		.data(forecast_Everyone);
+
+	svg.selectAll(".dataLine")
+		.transition()
+		.attr("d", line);
+
+	svg.selectAll(".labels")
+	.data(forecast_Everyone)
+	.datum(function(d) { 
+		// console.log(d[d.length - 1].source); 
+		return {source: d[d.length - 1].source, consTotal: d[d.length - 1].consTotal, year: d[d.length - 1].year};
+	})
+	.transition()
+	.attr("transform", function(d, i) { 
+		// console.log(d);
+		return "translate(" + x(d.year) + "," + y(d.consTotal) + ")"; });
+}
+
+var xAxis = d3.svg.axis()
+	.scale(x)
+	.orient("bottom")
+	.tickFormat(d3.format("d"));
+
+var yAxis = d3.svg.axis()
+	.scale(y)
+	.orient("left")
+	.ticks(5);
+
+svg.append("g")
+	.attr("class", "x axis")
+	.attr("transform", "translate(0," + h + ")")
+	.call(xAxis);
+
+svg.append("g")
+	.attr("class", "y axis")
+	.attr("transform", "translate(0, 0)")
+	.call(yAxis)
+	.append("text")
+	.attr("transform", "rotate(-90)")
+	.attr("y", 6)
+	.attr("dy", ".71em")
+	.style("text-anchor", "end")
+	.text("GWH");
+
+
+// ---for bar chart---
+
+var supplyYear = {key: "Year", value:[1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025]};
+
+var supply = [
+	{key: "Coal", value:[42846,44487,46765,46608,49325,51294,53619,55942,58805,62076,64440,63073,60890,56629,60731,62669,58129,58129,55043,55043,55043,55043,55043,55043,55043,55043,55043,55043,55043,55043]},
+	{key: "Oil", value:[31547,26171,29352,28188,29607,20904,19288,19143,19085,19390,19219,19454,18781,17180,18503,17508,17102,17102,17102,17102,13244,8100,8100,8100,4088,4088,4088,4088,4088,4088]},
+	{key: "LNG", value:[19836,33220,38700,46069,56716,69317,77064,85168,91248,94820,100370,107634,106030,103064,114305,117998,115262,115262,115262,115262,112690,108760,108760,108760,108760,108760,104907,104907,104907,104907]},
+	{key: "Nuclear", value:[37788,36269,36824,38416,38503,35486,39553,38892,39490,39972,39870,40539,40827,41571,41629,42116,41336,41336,41336,41336,41336,41336,36226,31115,31115,23200,23200,15284,15284,15284]},
+	{key: "Hydro", value:[9044,9567,10608,8942,8878,9179,6368,6896,6556,7825,7999,8350,7772,7053,7255,6902,7598,7598,7598,7598,7598,7598,7598,7598,7598,7598,7598,7598,7598,7598]},
+	{key: "Solar", value:[0,0,0,0,0,0,0,0,1,1,1,2,5,9,25,67,71,71,71,71,71,71,71,71,71,71,71,71,71,71]},
+	{key: "Windonshore", value:[0,0,0,0,1,12,16,24,25,91,276,440,588,787,1026,1493,1236,1236,1236,1236,1236,1236,1236,1236,1236,1236,1236,1236,1236,1236]},
+	{key: "Windoffshore", value:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},
+	{key: "Geothermal", value:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},
+	{key: "Biomass", value:[375,272,249,277,352,339,383,376,363,336,385,609,486,495,539,327,471,471,471,471,471,471,471,471,471,471,471,471,471,471]},
+	{key: "Waste", value:[527,500,687,973,1480,2010,2546,2633,2825,2853,2902,3014,2935,2907,3036,3092,3004,3004,3004,3004,3004,3004,3004,3004,3004,3004,3004,3004,3004,3004]}
+];
+
+var addUp = function(){
+	var Total;
+	for(var i = 0; i < consByYear.length; i++ ){
+		// console.log(consByYear[i].year);
+		if(consByYear[i].year === 2030){
+			Total = (consByYear[i].consTotal);
+		}
+	}
+	return Total;
+}
+function setUpTangle () {
+
+	var element = document.getElementById("text");
+
+	var tangle = new Tangle(element, {		
+
+		initialize: function () {
+				this.GDP_YoY = 0.03;
+				this.PPL_5y_CAGR = 0.003;
+				this.forecast_2030 = Math.floor( addUp());
+		},
+		update: function () {
+
+			GDP_YoY = this.GDP_YoY;
+			PPL_5y_CAGR = this.PPL_5y_CAGR;
+			projection();
+			redraw();
+
+			this.forecast_2030 = Math.floor(addUp());	
+		}
+	});
+}
+window.onload = function(){
+	setUpTangle();
+}
+
+Tangle.formats.comma = 
+function numberWithCommas(value) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+
+
+</script>
+
+<div id="text">
+		<h3>電力需求成長</h3>
+
+		<ul>
+			<li><p>GDP 為 <span data-var="GDP_YoY" class="TKAdjustableNumber" data-step="0.01" data-min="-0.03" data-max="0.1"></span></p></li>
+			<li><p>人口複合成長率為 <span data-step="0.0001" data-var="PPL_5y_CAGR" class="TKAdjustableNumber" data-min="0.0030" data-max="0.0038"></span></p></li>
+			<li><p>2030 年的總電力需求為 <span data-var="forecast_2030" data-format="comma"></span> GWH</p></li>
+		</ul>
+</div>
+<pre><code>
+
+n = year after;
+Total_Consumption = Industrial + Service + Residential; 
+	Future_Indusrial_Consumption = Current_Industrial_Consumption * (1 + GDP_YoY ) ^ n;
+	Future_Service_Consumption = Current_Service_Consumption * (1 + PPL_5y_CAGR * 4) ^ n;
+	Future_Residential_Consumption = Current_Residentiak_Consumption * (1 + PPL_5y_CAGR * 4) ^ n;
+
+Current_Industrial_Consumption =  127776;
+Current_Service_Consumption = 46878;
+Current_Residentiak_Consumption = 44419;
+
+The above three sector accounts for 90% of Taiwan power structure, using a linear model to deduce total.
+
+GDP YoY, -3%~10% in last 18 years = 3% ;
+ppl 5y CAGR, 0.30%~0.38% in last 5 years = 0.30% ;
+
+</code></pre>
+
+<style type="text/css">
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+</style>
+
+<button id="togetherJS" class="btn btn-danger btn-xs" onclick="TogetherJS(this); return false;">
+  私人討論串
+</button> 
+<button class="btn btn-danger btn-xs" onclick="window.open('http://muyueh.com/see/nuk/demand.html#&togetherjs=zknpSAnjHJ')">
+  <span class="glyphicon glyphicon-user "></span>公開討論串
+</button>
+
+</body>
+</html>
